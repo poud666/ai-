@@ -37,11 +37,11 @@ async def _capture(url: str, match_path: str, state_path: Path, headless: bool =
                     pass
 
         page.on("response", on_response)
-        await page.goto(url, wait_until="networkidle")
-        # 触发滚动以加载更多
-        for _ in range(3):
-            await page.mouse.wheel(0, 2000)
-            await asyncio.sleep(1.5)
+        await page.goto(url, wait_until="domcontentloaded", timeout=60_000)
+        await asyncio.sleep(3)  # 等首屏接口
+        for _ in range(5):
+            await page.mouse.wheel(0, 3000)
+            await asyncio.sleep(2)
         await browser.close()
     return captured
 
