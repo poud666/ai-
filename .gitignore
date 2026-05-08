@@ -1,0 +1,28 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Login state — never commit
+auth/storage_state.json
+auth/*.json
+!auth/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Local data
+data/
+videos/
+downloads/
+*.mp4
+*.jpg
+*.png
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
