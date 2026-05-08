@@ -51,6 +51,12 @@ async def fetch_user(sec_uid: str, state_path: Path = STORAGE_STATE) -> list[dic
     return await _capture(url, "/aweme/v1/web/aweme/post/", state_path)
 
 
+async def fetch_self(state_path: Path = STORAGE_STATE) -> list[dict]:
+    """登录态下抓自己主页，无需 sec_uid。"""
+    url = "https://www.douyin.com/user/self"
+    return await _capture(url, "/aweme/v1/web/aweme/post/", state_path)
+
+
 async def fetch_video(aweme_id: str, state_path: Path = STORAGE_STATE) -> list[dict]:
     url = f"https://www.douyin.com/video/{aweme_id}"
     return await _capture(url, "/aweme/v1/web/aweme/detail/", state_path)
@@ -66,7 +72,8 @@ def _parse_args() -> argparse.Namespace:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     u = sub.add_parser("user", help="抓取用户主页视频列表")
-    u.add_argument("--sec-uid", required=True)
+    u.add_argument("--sec-uid", help="目标用户的 sec_uid (MS4wLjABAAAA...)")
+    u.add_argument("--self", dest="is_self", action="store_true", help="抓自己主页，无需 sec_uid")
 
     v = sub.add_parser("video", help="抓取视频详情")
     v.add_argument("--aweme-id", required=True)
@@ -79,7 +86,12 @@ def _parse_args() -> argparse.Namespace:
 
 async def _main(args: argparse.Namespace) -> None:
     if args.cmd == "user":
-        data = await fetch_user(args.sec_uid)
+        if args.is_self:
+            data = await fetch_self()
+        elif args.sec_uid:
+            data = await fetch_user(args.sec_uid)
+        else:
+            raise SystemExit("user 子命令需要 --sec-uid 或 --self")
     elif args.cmd == "video":
         data = await fetch_video(args.aweme_id)
     elif args.cmd == "comments":
