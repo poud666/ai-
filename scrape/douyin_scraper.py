@@ -16,7 +16,7 @@ from pathlib import Path
 
 from playwright.async_api import async_playwright
 
-from auth.login import STORAGE_STATE, ensure_login
+from auth.login import BROWSER_CHANNEL, STORAGE_STATE, ensure_login
 
 
 async def _capture(url: str, match_path: str, state_path: Path, headless: bool = True) -> list[dict]:
@@ -25,7 +25,7 @@ async def _capture(url: str, match_path: str, state_path: Path, headless: bool =
     captured: list[dict] = []
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=headless)
+        browser = await p.chromium.launch(headless=headless, channel=BROWSER_CHANNEL)
         ctx = await browser.new_context(storage_state=str(state_path))
         page = await ctx.new_page()
 

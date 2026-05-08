@@ -15,11 +15,14 @@ CREATOR_HOME = "https://creator.douyin.com/creator-micro/home"
 CREATOR_LOGIN = "https://creator.douyin.com/"
 
 
+BROWSER_CHANNEL = "msedge"  # 用 Windows 自带 Edge，免去下 Chromium
+
+
 async def is_logged_in(state_path: Path) -> bool:
     if not state_path.exists():
         return False
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(headless=True, channel=BROWSER_CHANNEL)
         ctx = await browser.new_context(storage_state=str(state_path))
         page = await ctx.new_page()
         await page.goto(CREATOR_HOME, wait_until="domcontentloaded")
@@ -35,7 +38,7 @@ async def is_logged_in(state_path: Path) -> bool:
 async def login(state_path: Path = STORAGE_STATE) -> None:
     state_path.parent.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(headless=False, channel=BROWSER_CHANNEL)
         ctx = await browser.new_context()
         page = await ctx.new_page()
         await page.goto(CREATOR_LOGIN)

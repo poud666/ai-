@@ -17,7 +17,7 @@ from typing import Callable
 
 from playwright.async_api import Page, async_playwright
 
-from auth.login import STORAGE_STATE, ensure_login
+from auth.login import BROWSER_CHANNEL, STORAGE_STATE, ensure_login
 
 INBOX_URL = "https://creator.douyin.com/creator-micro/data-center/im"
 COMMENTS_URL = "https://creator.douyin.com/creator-micro/data/interaction/comment"
@@ -67,7 +67,7 @@ async def run(
 ) -> None:
     await ensure_login(state_path)
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=headless)
+        browser = await p.chromium.launch(headless=headless, channel=BROWSER_CHANNEL)
         ctx = await browser.new_context(storage_state=str(state_path))
         page = await ctx.new_page()
         while True:

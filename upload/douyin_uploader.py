@@ -13,7 +13,7 @@ from pathlib import Path
 
 from playwright.async_api import Page, async_playwright
 
-from auth.login import STORAGE_STATE, ensure_login
+from auth.login import BROWSER_CHANNEL, STORAGE_STATE, ensure_login
 
 UPLOAD_URL = "https://creator.douyin.com/creator-micro/content/upload"
 
@@ -70,7 +70,7 @@ async def upload_video(
     await ensure_login(state_path)
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=headless)
+        browser = await p.chromium.launch(headless=headless, channel=BROWSER_CHANNEL)
         ctx = await browser.new_context(storage_state=str(state_path))
         page = await ctx.new_page()
 
